@@ -1,33 +1,10 @@
 from flask import Blueprint, request, render_template
-import psycopg2
 
 accounts = Blueprint('accounts', __name__)
 
 @accounts.route('/sign_in/', methods=['GET'])
 def sign_in():
-	conn = psycopg2.connect("dbname=gsl_twitter")
-	cur = conn.cursor()
-	print('PostgreSQL database version:')
-	cur.execute('SELECT version()')
-	db_version = cur.fetchone()
-	print(db_version)
-
-	sql = """
-		CREATE TABLE accounts (
-			user_name VARCHAR(50) PRIMARY KEY,
-			email VARCHAR(50) NOT NULL,
-			password VARCHAR(20)
-		);
-	"""
-	cur.execute(sql)
-	conn.commit()
-
-	sql_add = """
-		INSERT INTO accounts
-		VALUES('cjholz', 'cjholz@mit.edu', 'ricky');
-		"""
-	cur.execute(sql_add)
-	conn.commit()
+	
 
 	return render_template('twitter/accounts/index.html')
 
