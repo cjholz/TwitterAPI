@@ -1,16 +1,25 @@
 from flask import Blueprint, request, render_template
+import psycopg2
 
 accounts = Blueprint('accounts', __name__)
 
 @accounts.route('/sign_in/', methods=['GET'])
 def sign_in():
-	
-
 	return render_template('twitter/accounts/index.html')
 
 @accounts.route('/new/', methods=['POST'])
 def create_user():
-	print(request.form)
+	form = request.form.to_dict()
+	conn = psycopg2.connect("dbname=gsl_twitter")
+	cur = conn.cursor()
+
+	sql_add = """
+		INSERT INTO accounts (user_name, email, password)
+		VALUES('%s', '%s', '%s');
+		"""%(form.get('user_name'), form.get('email'), form.get('password'))
+	cur.execute(sql_add)
+	conn.commit()
+
 	# user = manager.register_user(user_name, email, password)
 	# if not user:
 		# return {'error': 'user creation failed'}, 500
@@ -20,6 +29,15 @@ def create_user():
 
 @accounts.route('/get/<user_name>/', methods=['GET'])
 def get_user(user_name):
+	conn = psycopg2.connect("dbname=gsl_twitter")
+	cur = conn.cursor()
+
+	sql_add = """
+		SELECT * FROM accounts
+		WHERE user_name=%s
+		"""%(user_name)
+	cur.execute(sql_add)
+	conn.commit()
 	# user = manager.get_user(user_name)
 	# if not user:
 		# return {'error': 'user not found'}, 500
