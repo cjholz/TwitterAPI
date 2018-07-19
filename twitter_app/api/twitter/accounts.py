@@ -5,48 +5,42 @@ accounts = Blueprint('accounts', __name__)
 
 @accounts.route('/sign_in/', methods=['GET'])
 def sign_in():
+	return render_template('twitter/accounts/sign_in.html')
+
+@accounts.route('/sign_up/', methods=['GET'])
+def sign_in():
 	return render_template('twitter/accounts/index.html')
 
 @accounts.route('/new/', methods=['POST'])
 def create_user():
 	form = request.form.to_dict()
-	conn = psycopg2.connect("dbname=gsl_twitter")
-	cur = conn.cursor()
+	user_name = form.get('user_name')
+	email = form.get('email')
+	password = form.get('password')
+	
+	# check email unique
 
-	sql_add = """
-		INSERT INTO accounts (user_name, email, password)
-		VALUES('%s', '%s', '%s');
-		"""%(form.get('user_name'), form.get('email'), form.get('password'))
-	cur.execute(sql_add)
-	conn.commit()
+	# need to actually instantiate first
+	account_manager.create_user(user_name, email, password)
 
-	# user = manager.register_user(user_name, email, password)
-	# if not user:
-		# return {'error': 'user creation failed'}, 500
-	# else:
-		# return {'user_id': user.user_id}, 200
+	# actually use user info
 	return "New User"
 
-@accounts.route('/get/<user_name>/', methods=['GET'])
-def get_user(user_name):
+@accounts.route('/get/', methods=['GET'])
+def get_user():
+	form = request.form.to_dict()
 	conn = psycopg2.connect("dbname=gsl_twitter")
 	cur = conn.cursor()
 
-	sql_add = """
+	#check password
+
+	sql_get = """
 		SELECT * FROM accounts
-		WHERE user_name=%s
-		"""%(user_name)
-	cur.execute(sql_add)
+		WHERE user_name='%s';
+		"""%(form.get('user_name'))
+	cur.execute(sql_get)
 	conn.commit()
-	# user = manager.get_user(user_name)
-	# if not user:
-		# return {'error': 'user not found'}, 500
-	# else:
-		# return {'doc': 'user': {
-			# 'user_name': user.name,
-			# 'user_id': user.id,
-			# 'email': user.email
-		# }}, 200
+	# actually use user info
 	return "User Found"
 
 @accounts.route('/delete/<user_name>/', methods=['DELETE', 'GET'])

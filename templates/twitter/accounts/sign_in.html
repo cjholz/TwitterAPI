@@ -3,16 +3,14 @@
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/my_css.css') }}">
 </head>
 <body>
-	<form action='../new/' method='POST'>
+	<form action='../get/' method='POST'>
 		<label>User Name</label>
 		<input type='text' name='user_name'>
-		<label>Email</label>
-		<input type='email' name='email'>
 		<label>Password</label>
 		<input type='password' name='password'>
 		<br>
 		<input type='submit' name='submit' value='Submit'>
 	</form>
-	<input type='submit' name='signin' value='Sign In' onclick="window.location='/my/link/location';">
+	<img src="../../static/images/haka.jpg">
 </body>
 </html>
